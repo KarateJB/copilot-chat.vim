@@ -89,6 +89,28 @@ function! copilot_chat#submit_message() abort
 endfunction
 
 function! copilot_chat#http(method, url, headers, body) abort
+  let l:token_data = json_encode(a:body)
+
+  let l:curl_cmd = 'curl -s -X ' . a:method . ' --compressed '
+  for header in a:headers
+    let l:curl_cmd .= '-H "' . header . '" '
+  endfor
+  let l:curl_cmd .= "-d '" . l:token_data . "' " . a:url
+
+  if has("gui_running")
+    let l:response = system(escape(l:curl_cmd, '"'))
+  else
+    let l:response = system(l:curl_cmd)
+  endif
+
+  if v:shell_error != 0
+    echom 'Error: ' . v:shell_error
+    return ''
+  endif
+  return l:response
+endfunction
+
+function! copilot_chat#http_deprecated(method, url, headers, body) abort
   if has('win32')
     let l:ps_cmd = 'powershell -Command "'
     let l:ps_cmd .= '$headers = @{'
