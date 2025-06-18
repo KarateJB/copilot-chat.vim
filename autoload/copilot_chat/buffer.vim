@@ -29,6 +29,7 @@ function! copilot_chat#buffer#create() abort
   setlocal bufhidden=hide
   setlocal noswapfile
   setlocal filetype=copilot_chat
+  setlocal rnu
 
   " Set buffer name
   execute 'file CopilotChat-' . s:chat_count
